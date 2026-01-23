@@ -99,7 +99,7 @@ class Fused_Gromov_Wasserstein_distance():
         International Conference on Machine Learning (ICML). 2019.
     """
 
-    def __init__(self,alpha=0.5,method='shortest_path',features_metric='sqeuclidean',max_iter=500,verbose=False,amijo=True): #remplacer method par distance_method  
+    def __init__(self,alpha=0.5,method='shortest_path',features_metric='sqeuclidean',max_iter=500,verbose=False,amijo=True,G0=None,force_recompute=False): #remplacer method par distance_method  
         self.method=method
         self.max_iter=max_iter
         self.alpha=alpha
@@ -108,6 +108,8 @@ class Fused_Gromov_Wasserstein_distance():
         self.log=None
         self.verbose=verbose
         self.amijo=amijo
+        self.G0 = G0
+        self.force_recompute = force_recompute
         #if alpha==0 or alpha==1:
         #    self.amijo=True
 
@@ -119,7 +121,10 @@ class Fused_Gromov_Wasserstein_distance():
             return x.reshape(-1,1)
 
     def calc_fgw(self,M,C1,C2,t1masses,t2masses):
-        transpwgw,log= fgw.fgw_lp((1-self.alpha)*M,C1,C2,t1masses,t2masses,'square_loss',G0=None,alpha=self.alpha,verbose=self.verbose,amijo=self.amijo,log=True)      
+        G0 = self.G0
+        if C1.shape == C2.shape:
+            G0 = np.identity(len(C1))/len(C1)
+        transpwgw,log= fgw.fgw_lp((1-self.alpha)*M,C1,C2,t1masses,t2masses,'square_loss',G0=G0,alpha=self.alpha,verbose=self.verbose,amijo=self.amijo,log=True)      
         return transpwgw,log
         
     def graph_d(self,graph1,graph2):
@@ -136,8 +141,8 @@ class Fused_Gromov_Wasserstein_distance():
         nodes1=graph1.nodes()
         nodes2=graph2.nodes()
         startstruct=time.time()
-        C1=graph1.distance_matrix(method=self.method)
-        C2=graph2.distance_matrix(method=self.method)
+        C1=graph1.distance_matrix(method=self.method,force_recompute=self.force_recompute)
+        C2=graph2.distance_matrix(method=self.method,force_recompute=self.force_recompute)
         end2=time.time()
         t1masses = np.ones(len(nodes1))/len(nodes1)
         t2masses = np.ones(len(nodes2))/len(nodes2)
