@@ -119,12 +119,12 @@ class Graph():
         
         Parameters
         ----------
-        method : string, default shortest_path. choices : shortest_path, square_shortest_path, weighted_shortest_path, adjency, harmonic_distance
+        method : string, default shortest_path. choices : shortest_path, square_shortest_path, weighted_shortest_path, adjacency, harmonic_distance
                The method used to compute the structure matrix of the graph :
                    - shortest_path : compute all the shortest_path between the nodes
                    - square_shortest_path : same but squared 
                    - weighted_shortest_path : compute the shortest path of the weighted graph with weights the distances between the features of the nodes
-                   - adjency : compute the adjency matrix of the graph
+                   - adjacency : compute the adjacency matrix of the graph
                    - harmonic_distance : harmonic distance between the nodes
         changeInf : bool
                     If true when the graph has disconnected parts it replaces inf distances by a maxvaluemulti times the largest value of the structure matrix
@@ -213,7 +213,7 @@ class Graph():
 def find_thresh(C,inf=0.5,sup=3,step=10):
     """ Trick to find the adequate thresholds from where value of the C matrix are considered close enough to say that nodes are connected
         Tthe threshold is found by a linesearch between values "inf" and "sup" with "step" thresholds tested. 
-        The optimal threshold is the one which minimizes the reconstruction error between the shortest_path matrix coming from the thresholded adjency matrix 
+        The optimal threshold is the one which minimizes the reconstruction error between the shortest_path matrix coming from the thresholded adjacency matrix 
         and the original matrix.
     Parameters
     ----------
@@ -229,14 +229,14 @@ def find_thresh(C,inf=0.5,sup=3,step=10):
     dist=[]
     search=np.linspace(inf,sup,step)
     for thresh in search:
-        Cprime=sp_to_adjency(C,0,thresh)
+        Cprime=sp_to_adjacency(C,0,thresh)
         SC=shortest_path(Cprime,method='D')
         SC[SC==float('inf')]=100
         dist.append(np.linalg.norm(SC-C))
     return search[np.argmin(dist)],dist
 
-def sp_to_adjency(C,threshinf=0.2,threshsup=1.8):
-    """ Thresholds the structure matrix in order to compute an adjency matrix. 
+def sp_to_adjacency(C,threshinf=0.2,threshsup=1.8):
+    """ Thresholds the structure matrix in order to compute an adjacency matrix. 
     All values between threshinf and threshsup are considered representing connected nodes and set to 1. Else are set to 0    
     Parameters
     ----------
@@ -303,7 +303,7 @@ def wl_labeling(graph,h=2,tohash=True):
     l_aux = list(nx.get_node_attributes(graph_relabel,'attr_name').values())
     labels = np.zeros(len(l_aux), dtype=np.int32)
 
-    adjency_list = list([list(x[1].keys()) for x in graph_relabel.adjacency()]) #adjency list à l'ancienne comme version 1.0 de networkx
+    adjacency_list = list([list(x[1].keys()) for x in graph_relabel.adjacency()]) 
     for j in range(len(l_aux)):
         labels[j] = l_aux[j]
 
@@ -317,13 +317,13 @@ def wl_labeling(graph,h=2,tohash=True):
 
         l_aux = list(nx.get_node_attributes(graph_relabel,'attr_name'+str(niter-1)).values())
 
-        adjency_list = list([list(x[1].keys()) for x in graph_relabel.adjacency()]) #adjency list à l'ancienne comme version 1.0 de networkx
+        adjacency_list = list([list(x[1].keys()) for x in graph_relabel.adjacency()]) 
 
-        for v in range(len(adjency_list)):
+        for v in range(len(adjacency_list)):
         # form a multiset label of the node v of the i'th graph
         # and convert it to a string
 
-            prev_neigh=np.sort([labels[adjency_list[v]]][-1])
+            prev_neigh=np.sort([labels[adjacency_list[v]]][-1])
 
             long_label = np.concatenate((np.array([[labels[v]][-1]]),prev_neigh))
             long_label_string = ''.join([str(x) for x in long_label])
