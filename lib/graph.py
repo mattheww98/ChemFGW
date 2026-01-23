@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 
 import networkx as nx
@@ -119,12 +119,12 @@ class Graph():
         
         Parameters
         ----------
-        method : string, default shortest_path. choices : shortest_path, square_shortest_path, weighted_shortest_path, adjency, harmonic_distance
+        method : string, default shortest_path. choices : shortest_path, square_shortest_path, weighted_shortest_path, adjacency, harmonic_distance
                The method used to compute the structure matrix of the graph :
                    - shortest_path : compute all the shortest_path between the nodes
                    - square_shortest_path : same but squared 
                    - weighted_shortest_path : compute the shortest path of the weighted graph with weights the distances between the features of the nodes
-                   - adjency : compute the adjency matrix of the graph
+                   - adjacency : compute the adjacency matrix of the graph
                    - harmonic_distance : harmonic distance between the nodes
         changeInf : bool
                     If true when the graph has disconnected parts it replaces inf distances by a maxvaluemulti times the largest value of the structure matrix
