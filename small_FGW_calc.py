@@ -38,6 +38,8 @@ def split_indices(indices, n_chunks):
 
 def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_dir ='graphs/',out_dir= 'results',force_recompute=False):
     start_time = time.time()
+    if not os.path.isdir(out_dir):
+        os.makedir(out_dir)
     if method is not None:
         force_recompute=True
         if method not in ["shortest_path","square_shortest_path", "weighted_shortest_path", "adjacency", "harmonic_distance","true_distance","distance_weighted_adjacency","distance_weighted_harmonic"]:
