@@ -36,7 +36,7 @@ def split_indices(indices, n_chunks):
     k, m = divmod(len(indices), n_chunks)
     return [indices[i * k + min(i, m):(i+1) * k + min(i+1, m)] for i in range(n_chunks)]
 
-def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_dir ='graphs/',force_recompute=False):
+def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_dir ='graphs/',out_dir= 'results',force_recompute=False):
     start_time = time.time()
     if method is not None:
         force_recompute=True
@@ -72,11 +72,11 @@ def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_
         distance_matrix_df = pd.DataFrame(distance_matrix, index=mpids,columns=mpids).astype(np.float32).round(6)
         #distance_matrix_Norm_df = pd.DataFrame(distance_matrix_Norm, index=mpids,columns=mpids)
         if method is not None:
-            filename = f'FGW_results_{featurisation}_{alpha:.2f}_{method}_{distance}.csv'
+            filename = os.path.join(out_dir,f'FGW_results_{featurisation}_{alpha:.2f}_{method}_{distance}.csv')
             distance_matrix_df.to_csv(filename)
             print(f'generated {filename} in {time.time() - alpha_time:.4f} seconds')  
         else:
-            filename = f'FGW_results_{featurisation}_{alpha:.2f}_atomic_distance_{distance}.csv'
+            filename = os.path.join(out_dir,f'FGW_results_{featurisation}_{alpha:.2f}_atomic_distance_{distance}.csv')
             distance_matrix_df.to_csv(filename)
             print(f'generated {filename} in {time.time() - alpha_time:.4f} seconds')
 
@@ -90,4 +90,6 @@ if __name__ == '__main__':
     alphas = [0.5] #np.linspace(0,1,21)
     distance = 'cosine'
     method = 'harmonic_distance'
+    #n_cores = 40 defaults to cpu_count() - 1
+    #out_dir = '.' defaults to 'results/'
     run_FGW(alphas, distance, featurisation, method) 
