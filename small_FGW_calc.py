@@ -72,12 +72,14 @@ def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_
         distance_matrix_df = pd.DataFrame(distance_matrix, index=mpids,columns=mpids).astype(np.float32).round(6)
         #distance_matrix_Norm_df = pd.DataFrame(distance_matrix_Norm, index=mpids,columns=mpids)
         if method is not None:
-            filename = 'FGW_results_{featurisation}_{alpha:.2f}_{method}_{distance}.csv'
+            filename = f'FGW_results_{featurisation}_{alpha:.2f}_{method}_{distance}.csv'
             distance_matrix_df.to_csv(filename)
             print(f'generated {filename} in {time.time() - alpha_time:.4f} seconds')  
         else:
-            distance_matrix_df.to_csv(f'fabini_{featurisation}FGW_{alpha:.2f}_atomic_distance_{distance}.csv')
-            print(f'generated fabini_{featurisation}FGW_{alpha:.2f}_atomic_distance_{distance}.csv in {time.time() - alpha_time:.4f} seconds')  
+            filename = f'FGW_results_{featurisation}_{alpha:.2f}_atomic_distance_{distance}.csv'
+            distance_matrix_df.to_csv(filename)
+            print(f'generated {filename} in {time.time() - alpha_time:.4f} seconds')
+
             
     end_time = time.time()
     print(f"Total running time: {end_time - start_time:.4f} seconds")
