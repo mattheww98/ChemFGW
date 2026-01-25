@@ -25,7 +25,7 @@ def compute_fgw_chunk(graph_path, pair_indices, alpha, features_metric,method,fo
         try:
             dist = round(fgw.graph_d(graph_data[i], graph_data[j]),6)
         except Exception:
-            print(f"Error computing distance for row {row_idx}, col {col_idx}: {e}")
+            print(f"Error computing distance for row {i}, col {col_idx}: {j}")
             dist = np.nan
         results.append((i, j, dist))
     return results

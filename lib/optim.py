@@ -242,7 +242,7 @@ def cg(a, b, M, reg, f, df, G0=None, numItermax=500, stopThr=1e-09, verbose=Fals
         alpha, fc, f_val = do_linesearch(cost=cost,G=G,deltaG=deltaG,Mi=Mi,f_val=f_val,amijo=amijo,constC=constC,C1=C1,C2=C2,reg=reg,Gc=Gc,M=M)
 
         if alpha is None or np.isnan(alpha) :
-            raise NonConvergenceError('Alpha n a pas été trouvé')
+            raise NonConvergenceError('Alpha not found')
         else:
             G = G + alpha * deltaG #xt+1=xt +alpha dt
 
