@@ -170,7 +170,7 @@ class Graph():
                 C=shortest_path(A.multiply(D_sparse))
                 
             if method=='distance_weighted_adjacency':
-                C = A.astype(np.float32)*self.C
+                C = A.toarray()*self.C
 
             if method=='distance_weighted_harmonic':
                 A=A.astype(np.float32)*self.C
