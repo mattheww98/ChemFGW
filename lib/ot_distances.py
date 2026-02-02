@@ -99,7 +99,7 @@ class Fused_Gromov_Wasserstein_distance():
         International Conference on Machine Learning (ICML). 2019.
     """
 
-    def __init__(self,alpha=0.5,method='shortest_path',features_metric='sqeuclidean',max_iter=500,verbose=False,amijo=True,G0=None,force_recompute=False): #remplacer method par distance_method  
+    def __init__(self,alpha=0.5,method='shortest_path',features_metric='sqeuclidean',max_iter=500,verbose=False,amijo=True,G0=None,force_recompute=False,normalise_C=False): #remplacer method par distance_method  
         self.method=method
         self.max_iter=max_iter
         self.alpha=alpha
@@ -110,6 +110,7 @@ class Fused_Gromov_Wasserstein_distance():
         self.amijo=amijo
         self.G0 = G0
         self.force_recompute = force_recompute
+        self.normalise_C = normalise_C
         #if alpha==0 or alpha==1:
         #    self.amijo=True
 
@@ -141,8 +142,8 @@ class Fused_Gromov_Wasserstein_distance():
         nodes1=graph1.nodes()
         nodes2=graph2.nodes()
         startstruct=time.time()
-        C1=graph1.distance_matrix(method=self.method,force_recompute=self.force_recompute)
-        C2=graph2.distance_matrix(method=self.method,force_recompute=self.force_recompute)
+        C1=graph1.distance_matrix(method=self.method,force_recompute=self.force_recompute,normalise=self.normalise_C)
+        C2=graph2.distance_matrix(method=self.method,force_recompute=self.force_recompute,normalise=self.normalise_C)
         end2=time.time()
         t1masses = np.ones(len(nodes1))/len(nodes1)
         t2masses = np.ones(len(nodes2))/len(nodes2)
