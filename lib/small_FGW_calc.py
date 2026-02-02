@@ -12,20 +12,21 @@ import ot
 import argparse
 import time
 
-def compute_fgw_chunk(graph_path, pair_indices, alpha, features_metric,method,force_recompute=False):
+def compute_fgw_chunk(graph_path, pair_indices, alpha, features_metric,method,force_recompute=False,normalise_C=False):
     graph_data = load(graph_path, mmap_mode='r')
     fgw = Fused_Gromov_Wasserstein_distance(
         alpha=alpha,
         features_metric=features_metric,
         method=method,
-        force_recompute=force_recompute
+        force_recompute=force_recompute,
+        normalise_C=normalise_C
     )
     results = []
     for i, j in pair_indices:
         try:
             dist = round(fgw.graph_d(graph_data[i], graph_data[j]),6)
         except Exception:
-            print(f"Error computing distance for row {i}, col {j}")
+            print(f"Error computing distance for row {row_idx}, col {col_idx}: {e}")
             dist = np.nan
         results.append((i, j, dist))
     return results
@@ -36,13 +37,13 @@ def split_indices(indices, n_chunks):
     k, m = divmod(len(indices), n_chunks)
     return [indices[i * k + min(i, m):(i+1) * k + min(i+1, m)] for i in range(n_chunks)]
 
-def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_dir ='graphs/',out_dir= 'results',force_recompute=False):
+def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_dir ='graphs/',out_dir= 'results',force_recompute=False,normalise_C=False):
     start_time = time.time()
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     if method is not None:
         force_recompute=True
-        if method not in ["shortest_path","square_shortest_path", "weighted_shortest_path", "adjacency", "harmonic_distance","true_distance","distance_weighted_adjacency","distance_weighted_harmonic"]:
+        if method not in ["shortest_path","square_shortest_path","shortest_real_path", "weighted_shortest_path", "adjacency", "harmonic_distance","true_distance","distance_weighted_adjacency","distance_weighted_harmonic"]:
             print("Please use one of the methods listed in the Graph.distance_matrix() function in https://github.com/mattheww98/ChemFGW/blob/master/lib/graph.py. Defaulting to harmonic_distance")
             method = "harmonic_distance"
     print(f"Running with alphas {alphas}, feat {featurisation}, distance {distance}, and method {method if method is not None else 'atomic distance'}")
@@ -62,7 +63,7 @@ def run_FGW(alphas, distance, featurisation, method,n_cores=cpu_count()-1,graph_
     for alpha in alphas:
         alpha_time = time.time()
         parallel_results = Parallel(n_jobs=n_cores)(
-        delayed(compute_fgw_chunk)(graphs_path, chunk, alpha,distance,method,force_recompute) for chunk in index_chunks)
+        delayed(compute_fgw_chunk)(graphs_path, chunk, alpha,distance,method,force_recompute,normalise_C) for chunk in index_chunks)
         print("Parallel computation complete")
     # Fill final matrix
         distance_matrix = np.zeros((n, n),dtype='f')
