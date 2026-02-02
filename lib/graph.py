@@ -113,7 +113,7 @@ class Graph():
         except IndexError:
             return x.reshape(-1,1)
 
-    def distance_matrix(self,method='shortest_path',changeInf=True,maxvaluemulti=10,force_recompute=True): 
+    def distance_matrix(self,method='shortest_path',changeInf=True,maxvaluemulti=10,force_recompute=True,normalise=False): 
         """ Compute the structure matrix of the graph. 
         It aims at comparing nodes between them using a notion of similarity defined by the "method" parameter
         
@@ -154,7 +154,10 @@ class Graph():
                 C=np.array(C)
                 
             if method=='shortest_path':                
-                C=shortest_path(A) 
+                C=shortest_path(A)
+
+            if method=='shortest_real_path':
+                C=shortest_path(A.toarray()*self.C)
              
             if method=='square_shortest_path':
                 C=shortest_path(A)
@@ -189,7 +192,10 @@ class Graph():
             self.name_struct_dist=method
         end=time.time()
         self.log['allStructTime']=(end-start)
-        return self.C
+        if normalise:
+            return self.C/np.mean(self.C)
+        else:
+            return self.C
         
     def all_matrix_attr(self,return_invd=False):
         d=dict((k, v) for k, v in self.nx_graph.nodes.items())
