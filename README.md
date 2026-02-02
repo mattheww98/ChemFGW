@@ -1,6 +1,9 @@
 
-# FGW
+# ChemFGW
 
+Adaptation of the FGW library found [here](https://github.com/tvayer/FGW) for primary use on chemical systems, especially periodic crystals. 
+See paper for details and examples in materials chemistry.
+Documentation for original library below:
 Python3 implementation of the paper [Optimal Transport for structured data with application on graphs
 ](https://arxiv.org/abs/1805.09114) 
 
