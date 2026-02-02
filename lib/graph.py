@@ -173,7 +173,7 @@ class Graph():
                 C = A.toarray()*self.C
 
             if method=='distance_weighted_harmonic':
-                A=A.astype(np.float32)*self.C
+                A=A.toarray()*self.C
                 D=np.sum(A,axis=0)
                 L=np.diag(D)-A
 
